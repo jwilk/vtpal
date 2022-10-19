@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+# encoding=UTF-8
+
+# Copyright © 2022 Jakub Wilk <jwilk@jwilk.net>
+# SPDX-License-Identifier: MIT
+
+import argparse
+import fcntl
+import re
+import sys
+
+epilog='''
+color order:
+* black
+* dark
+* red
+* dark green
+* brown
+* dark blue
+* dark purple
+* dark cyan
+* light grey
+* dark grey
+* bright red
+* bright green
+* yellow
+* bright
+* blue
+* bright purple
+* bright cyan
+* white
+'''
+
+
+# from </usr/include/linux/kd.h>:
+GIO_CMAP = 0x4B70
+PIO_CMAP = 0x4B71
+
+class Cmd:
+
+    @classmethod
+    def add_arg_parser(cls, parent):
+        name = cls.__name__.lower()
+        ap_args = dict(
+            epilog=epilog,
+            formatter_class=argparse.RawDescriptionHelpFormatter
+        )
+        ap = parent.add_parser(name, **ap_args)
+        ap.set_defaults(cls=cls)
+        return ap
+
+class Get(Cmd):
+
+    @classmethod
+    def add_arg_parser(cls, parent):
+        ap = super().add_arg_parser(parent)
+        return ap
+
+    @classmethod
+    def run(cls, opts):
+        fd = sys.stdin.fileno()
+        buf = bytearray(3 * 16)
+        fcntl.ioctl(fd, GIO_CMAP, buf)
+        bufitr = iter(buf)
+        for r, g, b in zip(bufitr, bufitr, bufitr):
+            print(f'{r:02X}{g:02X}{b:02X}')
+
+
+def parse_rgb(s):
+    hx = '[0-9a-fA-F]'
+    regexp = '#?(H{3}|H{6})'.replace('H', hx)
+    match = re.fullmatch(regexp, s)
+    if match is None:
+        raise ValueError
+    s = match.group(1)
+    if len(s) == 3:
+        s = str.join('', (s[i // 2] for i in range(6)))
+    assert len(s) == 6
+    rgb = [int(s[(2 * i):(2 * i + 2)], 16) for i in range(3)]
+    return bytes(rgb)
+
+class Set(Cmd):
+
+    @classmethod
+    def add_arg_parser(cls, parent):
+        ap = super().add_arg_parser(parent)
+        ap.add_argument('colors', metavar='RGB', nargs=16, type=parse_rgb)
+        return ap
+
+    @classmethod
+    def run(cls, opts):
+        fd = sys.stdin.fileno()
+        buf = bytes.join(b'', opts.colors)
+        fcntl.ioctl(fd, PIO_CMAP, buf)
+
+class Reset(Cmd):
+
+    @classmethod
+    def add_arg_parser(cls, parent):
+        ap = super().add_arg_parser(parent)
+        return ap
+
+    @classmethod
+    def run(cls, opts):
+        vga_colors = '''
+            000 A00 0A0 A50
+            00A A0A 0AA AAA
+            555 F55 5F5 FF5
+            55F F5F 5FF FFF
+        '''.split()
+        buf = bytes.join(b'', map(parse_rgb, vga_colors))
+        fd = sys.stdin.fileno()
+        fcntl.ioctl(fd, PIO_CMAP, buf)
+
+def main():
+    ap = argparse.ArgumentParser()
+    sp = ap.add_subparsers()
+    sp.dest = 'cmd'  # https://bugs.python.org/issue9253
+    sp.required = True
+    for cmd in Get, Set, Reset:
+        cmd.add_arg_parser(sp)
+    opts = ap.parse_args()
+    opts.cls.run(opts)
+    pass
+
+if __name__ == '__main__':
+    main()
+
+# vim:ts=4 sts=4 sw=4 et
