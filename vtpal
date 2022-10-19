@@ -52,11 +52,6 @@ class Cmd:
 class Get(Cmd):
 
     @classmethod
-    def add_arg_parser(cls, parent):
-        ap = super().add_arg_parser(parent)
-        return ap
-
-    @classmethod
     def run(cls, opts):
         fd = sys.stdin.fileno()
         buf = bytearray(3 * 16)
@@ -94,11 +89,6 @@ class Set(Cmd):
         fcntl.ioctl(fd, PIO_CMAP, buf)
 
 class Reset(Cmd):
-
-    @classmethod
-    def add_arg_parser(cls, parent):
-        ap = super().add_arg_parser(parent)
-        return ap
 
     @classmethod
     def run(cls, opts):
