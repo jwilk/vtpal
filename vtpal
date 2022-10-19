@@ -12,8 +12,7 @@ import sys
 epilog='''
 color order:
 * black
-* dark
-* red
+* dark red
 * dark green
 * brown
 * dark blue
@@ -24,8 +23,7 @@ color order:
 * bright red
 * bright green
 * yellow
-* bright
-* blue
+* bright blue
 * bright purple
 * bright cyan
 * white
