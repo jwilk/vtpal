@@ -31,7 +31,6 @@ color order:
 * white
 '''
 
-
 # from </usr/include/linux/kd.h>:
 GIO_CMAP = 0x4B70
 PIO_CMAP = 0x4B71
@@ -59,7 +58,6 @@ class Get(Cmd):
         bufitr = iter(buf)
         for r, g, b in zip(bufitr, bufitr, bufitr):
             print(f'{r:02X}{g:02X}{b:02X}')
-
 
 def parse_rgb(s):
     hx = '[0-9a-fA-F]'
