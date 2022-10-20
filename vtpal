@@ -9,6 +9,8 @@ import fcntl
 import re
 import sys
 
+0_0  # Python >= 3.6 is required
+
 epilog='''
 color order:
 * black
