@@ -1,0 +1,57 @@
+.. code:: console
+
+   $ vtpal --help
+   usage: vtpal [-h] {get,set,reset} ...
+
+   positional arguments:
+     {get,set,reset}
+
+   options:
+     -h, --help       show this help message and exit
+
+   $ vtpal get
+   000000
+   AA0000
+   00AA00
+   AA5500
+   0000AA
+   AA00AA
+   00AAAA
+   AAAAAA
+   555555
+   FF5555
+   55FF55
+   FFFF55
+   5555FF
+   FF55FF
+   55FFFF
+   FFFFFF
+
+   $ vtpal set --help
+   usage: vtpal set [-h] RGB RGB RGB RGB RGB RGB RGB RGB RGB RGB RGB RGB RGB RGB RGB RGB
+
+   positional arguments:
+     RGB
+
+   options:
+     -h, --help  show this help message and exit
+
+   color order:
+   * black
+   * dark red
+   * dark green
+   * brown
+   * dark blue
+   * dark purple
+   * dark cyan
+   * light grey
+   * dark grey
+   * bright red
+   * bright green
+   * yellow
+   * bright blue
+   * bright purple
+   * bright cyan
+   * white
+
+.. vim:ft=rst ts=3 sts=3 sw=3 et
