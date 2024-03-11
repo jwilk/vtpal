@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import binascii
 import fcntl
 import re
 import sys
@@ -69,8 +70,7 @@ def parse_rgb(s):
     if len(s) == 3:
         s = str.join('', (s[i // 2] for i in range(6)))
     assert len(s) == 6
-    rgb = [int(s[(2 * i):(2 * i + 2)], 16) for i in range(3)]
-    return bytes(rgb)
+    return binascii.unhexlify(s)
 
 class Set(Cmd):
 
