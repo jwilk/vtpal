@@ -12,7 +12,7 @@ import sys
 
 0_0  # Python >= 3.6 is required
 
-epilog='''
+epilog = '''
 color order:
 * black
 * dark red
